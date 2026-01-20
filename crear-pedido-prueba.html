@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Pedido de Prueba - Sophie</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #d946a6;
+            margin-top: 0;
+            border-bottom: 3px solid #d946a6;
+            padding-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #d946a6;
+        }
+        button {
+            background: linear-gradient(135deg, #d946a6, #ff6b9d);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 70, 166, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .success {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .item-list {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Crear Pedido de Prueba</h1>
+        
+        <div class="info">
+            <strong>ℹ️ Propósito:</strong> Esta herramienta crea pedidos de prueba directamente en localStorage para verificar que el sistema de Pedidos Online funciona correctamente.
+        </div>
+
+        <div class="form-group">
+            <label>Email del Cliente:</label>
+            <input type="email" id="customerEmail" value="cliente@test.com" placeholder="cliente@email.com">
+        </div>
+
+        <div class="form-group">
+            <label>Método de Pago:</label>
+            <select id="paymentMethod">
+                <option value="transferencia">🏦 Transferencia Bancaria (Requiere confirmación)</option>
+                <option value="sinpe">📱 SINPE Móvil (Requiere confirmación)</option>
+                <option value="tarjeta">💳 Tarjeta de Crédito (Confirmación automática)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Método de Envío:</label>
+            <select id="shippingMethod">
+                <option value="delivery">📦 Envío a Domicilio</option>
+                <option value="pickup">🏪 Retiro en Tienda</option>
+            </select>
+        </div>
+
+        <div class="item-list">
+            <strong>📦 Productos de Prueba:</strong>
+            <div class="item">
+                <span>Bulto de Flores x1</span>
+                <span>₡19,500.00</span>
+            </div>
+            <div class="item">
+                <span>Peluche Vaca 33cm x2</span>
+                <span>₡23,000.00</span>
+            </div>
+            <div class="item">
+                <span>Taza Stitch x1</span>
+                <span>₡8,500.00</span>
+            </div>
+            <div class="item" style="font-weight: bold; color: #d946a6; border-top: 2px solid #d946a6; margin-top: 10px; padding-top: 10px;">
+                <span>TOTAL</span>
+                <span>₡51,000.00</span>
+            </div>
+        </div>
+
+        <button onclick="crearPedidoPrueba()">✨ Crear Pedido de Prueba</button>
+
+        <div id="success-message" class="success"></div>
+    </div>
+
+    <script>
+        function generateOrderNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `ORD-${year}${month}${day}-${hours}${minutes}${seconds}`;
+        }
+
+        function crearPedidoPrueba() {
+            const customerEmail = document.getElementById('customerEmail').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const shippingMethod = document.getElementById('shippingMethod').value;
+
+            if (!customerEmail) {
+                alert('❌ Por favor ingresa un email');
+                return;
+            }
+
+            // Productos de prueba
+            const cartItems = [
+                { id: 1, title: 'Bulto de Flores', price: 19500, qty: 1, img: 'Fotos productos/Bulto rosado de flores/WhatsApp Image 2026-01-14 at 13.19.12.jpeg' },
+                { id: 2, title: 'Peluche Vaca 33cm', price: 11500, qty: 2, img: 'Fotos productos/Vaca/WhatsApp Image 2026-01-14 at 13.13.45.jpeg' },
+                { id: 8, title: 'Taza Stitch', price: 8500, qty: 1, img: 'Fotos productos/Tasa Stitch/WhatsApp Image 2026-01-14 at 14.42.23.jpeg' }
+            ];
+
+            const total = cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const orderNum = generateOrderNumber();
+
+            // 1. Guardar en invoiceHistory (para historial de ventas)
+            const invoiceHistory = JSON.parse(localStorage.getItem('invoiceHistory') || '[]');
+            const invoice = {
+                id: orderNum,
+                date: new Date().toISOString(),
+                source: 'tienda_virtual',
+                cashier: 'Tienda Virtual',
+                store: 'tienda_virtual',
+                paymentMethods: [{ method: paymentMethod, amount: total }],
+                items: cartItems,
+                subtotal: total,
+                discount: 0,
+                shippingMethod: shippingMethod,
+                pickupStore: shippingMethod === 'pickup' ? 'tienda1' : '',
+                pickupStoreInfo: shippingMethod === 'pickup' ? 'Sophie Store' : '',
+                customerEmail: customerEmail,
+                customerName: customerEmail.split('@')[0],
+                status: 'pendiente'
+            };
+            invoiceHistory.push(invoice);
+            localStorage.setItem('invoiceHistory', JSON.stringify(invoiceHistory));
+            console.log('✅ Guardado en invoiceHistory:', invoice);
+
+            // 2. Guardar en onlineOrders (para tab de Pedidos Online)
+            const onlineOrders = JSON.parse(localStorage.getItem('onlineOrders') || '[]');
+            const onlineOrder = {
+                id: orderNum,
+                date: new Date().toISOString(),
+                customerEmail: customerEmail,
+                paymentMethod: paymentMethod,
+                total: total,
+                status: paymentMethod === 'tarjeta' ? 'confirmado' : 'pendiente',
+                items: cartItems,
+                shippingMethod: shippingMethod,
+                confirmedDate: paymentMethod === 'tarjeta' ? new Date().toISOString() : null,
+                dispatchedDate: null
+            };
+            onlineOrders.push(onlineOrder);
+            localStorage.setItem('onlineOrders', JSON.stringify(onlineOrders));
+            console.log('✅ Guardado en onlineOrders:', onlineOrder);
+
+            // Mostrar mensaje de éxito
+            const successMsg = document.getElementById('success-message');
+            const statusText = paymentMethod === 'tarjeta' ? '✅ CONFIRMADO' : '⏳ PENDIENTE';
+            const paymentText = paymentMethod === 'tarjeta' ? 'Tarjeta' : paymentMethod === 'sinpe' ? 'SINPE Móvil' : 'Transferencia';
+            
+            successMsg.innerHTML = `
+                <strong>🎉 ¡Pedido Creado Exitosamente!</strong><br><br>
+                📦 <strong>Número de Orden:</strong> ${orderNum}<br>
+                📧 <strong>Cliente:</strong> ${customerEmail}<br>
+                💳 <strong>Método de Pago:</strong> ${paymentText}<br>
+                📦 <strong>Envío:</strong> ${shippingMethod === 'delivery' ? 'Domicilio' : 'Retiro en Tienda'}<br>
+                💰 <strong>Total:</strong> ₡${total.toLocaleString('es-CR')}<br>
+                📊 <strong>Estado:</strong> ${statusText}<br><br>
+                <strong>✅ Ahora puedes:</strong><br>
+                1. Abrir <a href="pos.html" style="color: white; text-decoration: underline;">pos.html</a><br>
+                2. Ir al tab "📦 Pedidos Online"<br>
+                3. Verificar que el pedido aparece en la lista
+            `;
+            successMsg.style.display = 'block';
+
+            // Scroll al mensaje
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Cargar datos guardados al inicio
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('test_customer_email');
+            if (savedEmail) {
+                document.getElementById('customerEmail').value = savedEmail;
+            }
+
+            // Guardar email cuando cambia
+            document.getElementById('customerEmail').addEventListener('change', (e) => {
+                localStorage.setItem('test_customer_email', e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>
